@@ -12,7 +12,6 @@ public class Material {
     private Color Kd;
     private Color Ks;
     private Color Ke;
-    private float T;
     private BufferedImage texture = null;
 
     public void setKa(Color ka) {
@@ -28,10 +27,12 @@ public class Material {
         Ks = ks;
     }
     public void setTr(float tr) {
-        this.T = tr;
+        this.Ka.setAlpha(tr);
+        this.Kd.setAlpha(tr);
     }
     public void setD(float d) {
-        this.T = 1f - d;
+        this.Ka.setAlpha(1f - d);
+        this.Kd.setAlpha(1f - d);
     }
 
     public Color getKa() {
@@ -46,10 +47,6 @@ public class Material {
     public Color getKs() {
         return Ks;
     }
-    public float getT() {
-        return T;
-    }
-
     public float getEmission() {
         return Ke.getLuminance();
     }

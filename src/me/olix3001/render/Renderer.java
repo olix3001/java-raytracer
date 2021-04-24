@@ -59,6 +59,7 @@ public class Renderer {
         Color hitColor = hit.getSolid().getTextureColor(hitPos);
         float emission = hitSolid.getEmission();
         float reflectivity = hitSolid.getReflectivity();
+        float solidTransparency = hitColor.getAlpha();
 
         // Diffuse shading
         float brightness = getDiffuseBrightness(scene, hit);
@@ -79,7 +80,7 @@ public class Renderer {
         }
 
         // TRANSPARENCY
-        if (hitSolid.getTransparency() != 0) {
+        if (solidTransparency != 0) {
             PixelData transparency = null;
             Vector3 tRayDir = hit.getRay().getDirection();
             Vector3 tRayStart = hit.getIntersection().getEnd().add(tRayDir.multiply(0.001f));
@@ -90,11 +91,11 @@ public class Renderer {
                 transparency = new PixelData(Color.SKY, 1f, 0f);
             }
 
-            hitColor = Color.lerp(hitColor, transparency.getColor(), hitSolid.getTransparency());
+            hitColor = Color.lerp(hitColor, transparency.getColor(), solidTransparency);
         }
 
-        Color pixelColor = hitColor.multiply(brightness / (1f-hitSolid.getTransparency())) // diffuse shading
-                .add(specularBrightness * (1f-hitSolid.getTransparency())) // specular shading
+        Color pixelColor = hitColor.multiply(brightness / (1f-solidTransparency)) // diffuse shading
+                .add(specularBrightness * (1f-solidTransparency)) // specular shading
                 .add(hitColor.multiply(emission)); // emission
 
         return new PixelData(pixelColor, Vector3.distance(scene.getCamera().getPosition(), hitPos), Math.min(1, emission + reflection.getEmission() * reflectivity + specularBrightness));

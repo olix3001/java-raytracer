@@ -10,11 +10,13 @@ public class MtlLoader {
     private String path;
     private Map<String, Material> materials = new HashMap<>();
     private String currentMtl = null;
+    private boolean textureTransparency;
 
     private boolean loaded = false;
 
-    public MtlLoader(String path) {
+    public MtlLoader(String path, boolean textureTransparency) {
         this.path = path;
+        this.textureTransparency = textureTransparency;
     }
 
     public void load() throws FileNotFoundException {
@@ -80,6 +82,16 @@ public class MtlLoader {
 
     public boolean isLoaded() {
         return loaded;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+        loaded = false;
+    }
+
+    public void useTextureTransparency(boolean textureTransparency) {
+        this.textureTransparency = textureTransparency;
+        loaded = false;
     }
 
     public Map<String, Material> getMaterials() {

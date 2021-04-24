@@ -8,8 +8,8 @@ import me.olix3001.render.Ray;
 public class Sphere extends Solid {
     private float radius;
 
-    public Sphere(Vector3 pos, float radius, Color color, float reflectivity, float emission, float transparency) {
-        super(pos, color, reflectivity, emission, transparency);
+    public Sphere(Vector3 pos, float radius, Color color, float reflectivity, float emission) {
+        super(pos, color, reflectivity, emission);
         this.radius = radius;
     }
 

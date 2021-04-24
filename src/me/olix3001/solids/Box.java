@@ -8,8 +8,8 @@ import me.olix3001.render.Ray;
 public class Box extends Solid {
     public Vector3 min, max;
 
-    public Box(Vector3 position, Vector3 scale, Color color, float reflectivity, float emission, float transparency) {
-        super(position, color, reflectivity, emission, transparency);
+    public Box(Vector3 position, Vector3 scale, Color color, float reflectivity, float emission) {
+        super(position, color, reflectivity, emission);
         this.max = position.add(scale.multiply(0.5F));
         this.min = position.subtract(scale.multiply(0.5F));
     }

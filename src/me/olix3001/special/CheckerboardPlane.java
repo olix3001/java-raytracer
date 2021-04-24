@@ -6,7 +6,7 @@ import me.olix3001.solids.Plane;
 
 public class CheckerboardPlane extends Plane {
     public CheckerboardPlane(float height, float reflectivity, float emission) {
-        super(height, Color.BLACK, reflectivity, emission, 0f);
+        super(height, Color.BLACK, reflectivity, emission);
     }
     @Override
     public Color getTextureColor(Vector3 point) {

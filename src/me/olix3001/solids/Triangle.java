@@ -11,8 +11,8 @@ public class Triangle extends Solid {
     private Vector3 position3;
     public float EPSILON = 0.0000001f;
 
-    public Triangle(Vector3 position, Vector3 position2, Vector3 position3, Color color, float reflectivity, float emission, float transparency) {
-        super(position, color, reflectivity, emission, transparency);
+    public Triangle(Vector3 position, Vector3 position2, Vector3 position3, Color color, float reflectivity, float emission) {
+        super(position, color, reflectivity, emission);
         this.position2 = position2;
         this.position3 = position3;
     }

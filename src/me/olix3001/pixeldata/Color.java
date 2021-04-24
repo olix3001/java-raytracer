@@ -7,6 +7,7 @@ public class Color {
     private float red;
     private float green;
     private float blue;
+    private float alpha = 0f;
 
     public Color(float red, float green, float blue) {
         if (red > 1F || green > 1F || blue > 1F)
@@ -18,6 +19,19 @@ public class Color {
         this.red = red;
         this.green = green;
         this.blue = blue;
+    }
+
+    public Color(float red, float green, float blue, float alpha) {
+        if (red > 1F || green > 1F || blue > 1F || alpha > 1F || alpha < 0F)
+            throw new IllegalArgumentException("Color parameter(s) outside of expected range");
+
+        if (Float.isNaN(red) || Float.isNaN(green) || Float.isNaN(blue) || Float.isNaN(alpha))
+            throw new IllegalArgumentException("One or more color parameters are NaN");
+
+        this.red = red;
+        this.green = green;
+        this.blue = blue;
+        this.alpha = alpha;
     }
 
     public float getRed() {
@@ -100,8 +114,9 @@ public class Color {
         int b = (argb)&0xFF;
         int g = (argb>>8)&0xFF;
         int r = (argb>>16)&0xFF;
+        int a = (argb>>24)&0xFF;
 
-        return new Color(r/255F, g/255F, b/255F);
+        return new Color(r/255F, g/255F, b/255F, 1f-(a/255F));
     }
 
     public java.awt.Color toAWTColor() {
@@ -128,4 +143,16 @@ public class Color {
     public static final Color SKY = Color.fromRGB(72, 191, 227);
     public static final Color GRAY = new Color(0.5F, 0.5F, 0.5F);
     public static final Color DARK_GRAY = new Color(0.2F, 0.2F, 0.2F);
+
+    public float getAlpha() {
+        return alpha;
+    }
+
+    public void setAlpha(float alpha) {
+        this.alpha = alpha;
+    }
+
+    public void removeAlpha() {
+        this.setAlpha(0f);
+    }
 }

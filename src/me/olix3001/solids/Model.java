@@ -16,16 +16,24 @@ import java.util.List;
 
 public class Model extends Solid {
 
-    List<Triangle> triangles = new ArrayList<>();
+    List<Triangle> triangles;
     private float size;
+    private boolean textureTransparency;
+    private Obj obj;
 
-    public Model(Vector3 position, Obj obj, float size, float reflectivity) {
-        super(position, Color.BLACK, reflectivity, 0f, 0f);
+    public Model(Vector3 position, Obj obj, float size, float reflectivity, boolean textureTransparency) {
+        super(position, Color.BLACK, reflectivity, 0f);
         this.size = size;
+        this.textureTransparency = textureTransparency;
+        this.obj = obj;
+        load();
+    }
 
+    private void load() {
+        this.triangles = new ArrayList<>();
         ObjLoader loader = null;
         if (obj.hasMtl()) {
-            loader = new ObjLoader(obj.getObjPath(), new MtlLoader(obj.getMtlPath()));
+            loader = new ObjLoader(obj.getObjPath(), new MtlLoader(obj.getMtlPath(), textureTransparency));
         } else {
             loader = new ObjLoader(obj.getObjPath());
         }
@@ -47,10 +55,11 @@ public class Model extends Solid {
                                 t.uva,
                                 t.uvb,
                                 t.uvc,
-                                f.getColor(), this.reflectivity,
+                                f.getColor(),
+                                this.reflectivity,
                                 f.getEmission(),
-                                f.getTransparency(),
-                                f.getMaterial())
+                                f.getMaterial(),
+                                textureTransparency)
                         );
                     } else {
                         triangles.add(new Triangle(
@@ -58,8 +67,7 @@ public class Model extends Solid {
                                 position.add(t.b.multiply(size)),
                                 position.add(t.c.multiply(size)),
                                 f.getColor(), this.reflectivity,
-                                f.getEmission(),
-                                f.getTransparency())
+                                f.getEmission())
                         );
                     }
                     i++;
@@ -84,6 +92,10 @@ public class Model extends Solid {
             }
         }
         return closest;
+    }
+
+    public void reload() {
+        load();
     }
 
     @Override

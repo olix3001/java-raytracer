@@ -7,8 +7,8 @@ import me.olix3001.render.Ray;
 
 public class Plane extends Solid {
 
-    public Plane(float height, Color color, float reflectivity, float emission, float transparency) {
-        super(new Vector3(0, height, 0), color, reflectivity, emission, transparency);
+    public Plane(float height, Color color, float reflectivity, float emission) {
+        super(new Vector3(0, height, 0), color, reflectivity, emission);
     }
 
     @Override

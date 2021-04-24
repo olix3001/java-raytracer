@@ -13,8 +13,8 @@ public class TexturedPlane extends Plane {
     private boolean loaded = false;
     private float size;
 
-    public TexturedPlane(float height, String resourcePath, float size, float reflectivity, float emission, float transparency) {
-        super(height, Color.BLACK, reflectivity, emission, transparency);
+    public TexturedPlane(float height, String resourcePath, float size, float reflectivity, float emission) {
+        super(height, Color.BLACK, reflectivity, emission);
         this.size = size;
         try {
             image = ImageIO.read(getClass().getResourceAsStream("/resources/" + resourcePath));

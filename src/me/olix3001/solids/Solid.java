@@ -10,14 +10,12 @@ public abstract class Solid {
     protected Color color;
     protected float reflectivity;
     protected float emission;
-    protected float transparency;
 
-    public Solid(Vector3 position, Color color, float reflectivity, float emission, float transparency) {
+    public Solid(Vector3 position, Color color, float reflectivity, float emission) {
         this.position = position;
         this.color = color;
         this.reflectivity = reflectivity;
         this.emission = emission;
-        this.transparency = transparency;
     }
 
     public abstract Intersection calculateIntersection(Ray ray);
@@ -44,8 +42,5 @@ public abstract class Solid {
         return emission;
     }
 
-    public float getTransparency() {
-        return transparency;
-    }
     public int getObjectCount() { return 1; }
 }
