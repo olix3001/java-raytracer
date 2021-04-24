@@ -1,5 +1,6 @@
 package me.olix3001.utils;
 
+import me.olix3001.math.Vector2;
 import me.olix3001.math.Vector3;
 import me.olix3001.pixeldata.Color;
 
@@ -16,10 +17,19 @@ public class ObjLoader {
     private Map<String, Material> materials = null;
     private String currentMtl = null;
 
-    public static Color[] colors = new Color[]{Color.BLUE, Color.GREEN, Color.RED, Color.fromRGB(255, 214, 10), Color.fromRGB(116, 0, 184)};
+    public static Color[] colors = new Color[]{Color.BLUE, Color.GREEN, Color.RED,
+            Color.fromRGB(255, 214, 10),
+            Color.fromRGB(116, 0, 184),
+            Color.fromRGB(0, 245, 212),
+            Color.fromRGB(10, 255, 153),
+            Color.fromRGB(248, 150, 30),
+            Color.fromRGB(255, 89, 94),
+            Color.fromRGB(46, 196, 182)
+    };
 
     private boolean loaded = false;
     private List<Vector3> vertices;
+    private List<Vector2> UVs;
     private List<Face> faces;
 
     public ObjLoader(String path) {
@@ -48,6 +58,7 @@ public class ObjLoader {
 
         vertices = new ArrayList<>();
         faces = new ArrayList<>();
+        UVs = new ArrayList<>();
         int j = 0;
 
         while (reader.hasNextLine()) {
@@ -66,17 +77,24 @@ public class ObjLoader {
                 vertices.add(new Vector3(Float.parseFloat(parts[1]), Float.parseFloat(parts[2]), Float.parseFloat(parts[3])));
             }
 
+            // uv
+            if (l.startsWith("vt ")) {
+                UVs.add(new Vector2(Float.parseFloat(parts[1]), Float.parseFloat(parts[2])));
+            }
+
             // Face
             if (l.startsWith("f ")) {
                 List<Vector3> f = new ArrayList<>();
+                List<Vector2> uv = new ArrayList<>();
                 for (int i=1; i<parts.length; i++) {
                     String[] face = parts[i].split("/");
                     f.add(vertices.get(Integer.parseInt(face[0]) - 1));
+                    uv.add(UVs.get(Integer.parseInt(face[1]) - 1));
                 }
                 if (currentMtl == null) {
                     faces.add(new Face(f, colors[j % colors.length], 0f, 0f, 0f));
                 } else {
-                    faces.add(new Face(f, materials.get(currentMtl)));
+                    faces.add(new Face(f, uv, materials.get(currentMtl)));
                 }
             }
 

@@ -1,6 +1,5 @@
 package me.olix3001.utils;
 
-import me.olix3001.math.Vector3;
 import me.olix3001.pixeldata.Color;
 
 import java.io.File;
@@ -65,6 +64,13 @@ public class MtlLoader {
             if (l.startsWith("Tr ")) {
                 if (currentMtl != null) {
                     materials.get(currentMtl).setTr(Float.parseFloat(parts[1]));
+                }
+            }
+
+            // UV map
+            if (l.startsWith("map_Kd ")) {
+                if (currentMtl != null) {
+                    materials.get(currentMtl).setTexture(parts[1].replace("\\\\", "\\"), path);
                 }
             }
         }

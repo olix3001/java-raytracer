@@ -19,8 +19,8 @@ public class Model extends Solid {
     List<Triangle> triangles = new ArrayList<>();
     private float size;
 
-    public Model(Vector3 position, Obj obj, float size, float reflectivity, float emission, float transparency) {
-        super(position, Color.BLACK, reflectivity, emission, transparency);
+    public Model(Vector3 position, Obj obj, float size, float reflectivity) {
+        super(position, Color.BLACK, reflectivity, 0f, 0f);
         this.size = size;
 
         ObjLoader loader = null;
@@ -39,7 +39,29 @@ public class Model extends Solid {
             int i = 0;
             for (Face f : loader.getFaces()) {
                 for (Triangulation.Triangle t : Triangulation.triangulateFace(f)) {
-                    triangles.add(new Triangle(position.add(t.a.multiply(size)), position.add(t.b.multiply(size)), position.add(t.c.multiply(size)), f.getColor(), this.reflectivity, f.getEmission(), f.getTransparency()));
+                    if (f.getMaterial().hasTexture()) {
+                        triangles.add(new TexturedTriangle(
+                                position.add(t.a.multiply(size)),
+                                position.add(t.b.multiply(size)),
+                                position.add(t.c.multiply(size)),
+                                t.uva,
+                                t.uvb,
+                                t.uvc,
+                                f.getColor(), this.reflectivity,
+                                f.getEmission(),
+                                f.getTransparency(),
+                                f.getMaterial())
+                        );
+                    } else {
+                        triangles.add(new Triangle(
+                                position.add(t.a.multiply(size)),
+                                position.add(t.b.multiply(size)),
+                                position.add(t.c.multiply(size)),
+                                f.getColor(), this.reflectivity,
+                                f.getEmission(),
+                                f.getTransparency())
+                        );
+                    }
                     i++;
                 }
             }
