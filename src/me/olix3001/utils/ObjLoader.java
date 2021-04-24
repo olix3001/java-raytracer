@@ -92,7 +92,7 @@ public class ObjLoader {
                     uv.add(UVs.get(Integer.parseInt(face[1]) - 1));
                 }
                 if (currentMtl == null) {
-                    faces.add(new Face(f, colors[j % colors.length], 0f, 0f, 0f));
+                    faces.add(new Face(f, uv, colors[j % colors.length], 0f, 0f, 0f));
                 } else {
                     faces.add(new Face(f, uv, materials.get(currentMtl)));
                 }

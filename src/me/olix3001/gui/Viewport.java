@@ -4,7 +4,7 @@ import me.olix3001.math.Vector3;
 import me.olix3001.render.Camera;
 import me.olix3001.render.Renderer;
 import me.olix3001.render.Scene;
-import me.olix3001.solids.Solid;
+import me.olix3001.utils.ImageUtils;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -87,6 +87,9 @@ public class Viewport extends JPanel {
                 if (e.getKeyCode() == KeyEvent.VK_5) {
                     setResolution(1f);
                 }
+                if (e.getKeyCode() == KeyEvent.VK_6) {
+                    setResolution(2f);
+                }
                 if (e.getKeyCode() == KeyEvent.VK_0) {
                     autoResolution = !autoResolution;
                 }
@@ -157,9 +160,13 @@ public class Viewport extends JPanel {
 
             if (beforeRender != null) beforeRender.run(deltaTime);
 
-            BufferedImage tempBuffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
-            Renderer.renderScene(scene, tempBuffer.getGraphics(), getWidth(), getHeight(), resolution);
-            frameBuffer = tempBuffer;
+            float res = Math.max(resolution, 1f);
+            int neww = (int) (getWidth() * res);
+            int newh = (int) (getHeight() * res);
+            BufferedImage tempBuffer = new BufferedImage(neww, newh, BufferedImage.TYPE_INT_RGB);
+            Renderer.renderScene(scene, tempBuffer.getGraphics(), neww, newh, resolution);
+
+            frameBuffer = resolution <= 1f ? tempBuffer : ImageUtils.scale(tempBuffer, 1/resolution);
 
             repaint();
 
@@ -171,10 +178,13 @@ public class Viewport extends JPanel {
 
     @Override
     public void paintComponent(Graphics g) {
-        if (frameBuffer != null) g.drawImage(frameBuffer, 0, 0, this);
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+//      System.out.println(frameBuffer.getWidth());
+        if (frameBuffer != null) g2d.drawImage(frameBuffer, 0, 0, this);
 
         g.setColor(Color.white);
-        FontMetrics fm = g.getFontMetrics();
+        FontMetrics fm = g2d.getFontMetrics();
         // draw fps count
         String fps = String.valueOf(1000f/deltaTime);
         if (fps.length() > 4) fps = fps.substring(0,4);
@@ -185,19 +195,19 @@ public class Viewport extends JPanel {
         String countString =  scene.countSolids() +" objects";
         Rectangle2D countBounds = fm.getStringBounds(fpsString, g);
 
-        g.drawString(fpsString, 10, (int) (fpsBounds.getHeight()));
-        g.drawString(resolutionString, 10, (int) (resBounds.getHeight()*2));
-        g.drawString(countString, 10, (int) (countBounds.getHeight()*3));
+        g2d.drawString(fpsString, 10, (int) (fpsBounds.getHeight()));
+        g2d.drawString(resolutionString, 10, (int) (resBounds.getHeight()*2));
+        g2d.drawString(countString, 10, (int) (countBounds.getHeight()*3));
 
         // draw controls
-        String controls = "Resolution: [L] 5%, [1] 10%, [2] 25%, [3] 50%, [4] 75%, [5] 100%, [0] Toggle auto (" + (autoResolution ? "ON" : "OFF") + ")";
+        String controls = "Resolution: [L] 5%, [1] 10%, [2] 25%, [3] 50%, [4] 75%, [5] 100%, [6] 200% (antialiasing), [0] Toggle auto (" + (autoResolution ? "ON" : "OFF") + ")";
         String controls2 = "Controls: [W] Forward, [S] Backward, [A] Left, [D] Right, [SPACE] Up, [SHIFT] Down, [F1] Save image";
 
-        Rectangle2D controlsBounds = fm.getStringBounds(controls, g);
-        Rectangle2D controls2Bounds = fm.getStringBounds(controls2, g);
+        Rectangle2D controlsBounds = fm.getStringBounds(controls, g2d);
+        Rectangle2D controls2Bounds = fm.getStringBounds(controls2, g2d);
 
-        g.drawString(controls, 10, (int) (getHeight() - controls2Bounds.getHeight()*2));
-        g.drawString(controls2, 10, (int) (getHeight() - controls2Bounds.getHeight()));
+        g2d.drawString(controls, 10, (int) (getHeight() - controlsBounds.getHeight()*2));
+        g2d.drawString(controls2, 10, (int) (getHeight() - controls2Bounds.getHeight()));
     }
 
     public void askAndSaveScreenshot() {
@@ -209,10 +219,10 @@ public class Viewport extends JPanel {
             File file = fileChooser.getSelectedFile();
             // render
             BufferedImage saveBuffer = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_RGB);
-            Renderer.renderScene(scene, saveBuffer.getGraphics(), getWidth(), getHeight(), 1f);
+            Renderer.renderScene(scene, saveBuffer.getGraphics(), getWidth(), getHeight(), 2f);
             // save
             try {
-                ImageIO.write(saveBuffer, "png", file);
+                ImageIO.write(ImageUtils.scale(saveBuffer, .5f), "png", file);
             } catch (IOException e) {
                 e.printStackTrace();
             }

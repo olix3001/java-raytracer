@@ -15,10 +15,10 @@ public class Face {
     private float emission;
     private Material material;
 
-    public Face(List<Vector3> vertices, Color color, float transparency, float reflectivity, float emission) {
+    public Face(List<Vector3> vertices, List<Vector2> UVs, Color color, float transparency, float reflectivity, float emission) {
         this.vertices = vertices;
-        this.UVs = null;
-        this.material = null;
+        this.UVs = UVs;
+        this.material = new Material();
         this.color = color;
         this.transparency = transparency;
         this.reflectivity = reflectivity;

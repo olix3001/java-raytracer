@@ -13,7 +13,7 @@ public class Renderer {
     private static final float GLOBAL_ILLUMINATION = .2f;
 
     public static void renderScene(Scene scene, Graphics gfx, int w, int h, float resolution) {
-        int blockSize = (int) (1/resolution);
+        int blockSize = Math.max(1, (int) (1/resolution));
 
         for(int x=0; x<w; x+=blockSize) {
             for (int y=0; y<h; y+=blockSize) {
