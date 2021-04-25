@@ -19,12 +19,34 @@ public class Vector3 implements Serializable {
         this.z = z;
     }
 
+    public static interface VectorChangedListener {
+        public void vectorChanged(Vector3 v);
+    }
+
+    private List<VectorChangedListener> listeners = null;
+
+    public void addVectorListener(VectorChangedListener listener) {
+        if (listeners == null) {
+            listeners = new ArrayList<>();
+        }
+        listeners.add(listener);
+    }
+
+    private void changed() {
+        if (listeners != null) {
+            for (VectorChangedListener l : listeners) {
+                l.vectorChanged(this);
+            }
+        }
+    }
+
     public float getX() {
         return x;
     }
 
     public void setX(float x) {
         this.x = x;
+        changed();
     }
 
     public float getY() {
@@ -33,6 +55,7 @@ public class Vector3 implements Serializable {
 
     public void setY(float y) {
         this.y = y;
+        changed();
     }
 
     public float getZ() {
@@ -41,6 +64,7 @@ public class Vector3 implements Serializable {
 
     public void setZ(float z) {
         this.z = z;
+        changed();
     }
 
     public Vector3 add(Vector3 vec) {

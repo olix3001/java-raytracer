@@ -18,11 +18,15 @@ public class Box extends Solid {
         super(position, color, reflectivity, emission);
         setScale(scale);
         this.scale = scale;
+        this.position.addVectorListener((e) -> {
+            setScale(this.scale);
+        });
 
         this.name = "Box";
     }
 
     public void setScale(float scale) {
+        this.scale = scale;
         Vector3 v = new Vector3(scale, scale, scale);
         this.max = position.add(v.multiply(0.5F));
         this.min = position.subtract(v.multiply(0.5F));
