@@ -21,6 +21,10 @@ public class Obj {
         return mtlPath;
     }
 
+    public void setMtlPath(String mtlPath) {
+        this.mtlPath = mtlPath;
+    }
+
     public boolean hasMtl() {
         return !(mtlPath == null);
     }

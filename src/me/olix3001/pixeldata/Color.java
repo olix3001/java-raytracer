@@ -1,9 +1,10 @@
 package me.olix3001.pixeldata;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 
-public class Color {
+public class Color implements Serializable {
     private float red;
     private float green;
     private float blue;
@@ -122,6 +123,16 @@ public class Color {
     public java.awt.Color toAWTColor() {
         return new java.awt.Color(red, green, blue);
     }
+    public static Color fromAWTColor(java.awt.Color c) {
+        return new Color(c.getRed() / 255f, c.getGreen() / 255f, c.getBlue() / 255f, 1f - (c.getAlpha() / 255f));
+    }
+
+    public void fromAWT(java.awt.Color c) {
+        this.setRed(c.getRed() / 255f);
+        this.setGreen(c.getGreen() / 255f);
+        this.setBlue(c.getBlue() / 255f);
+        this.setAlpha(1f - (c.getAlpha() / 255f));
+    }
 
     private static float lerp(float a, float b, float t) {
         return a + t * (b - a);
@@ -133,6 +144,10 @@ public class Color {
     @Override
     public String toString() {
         return "Color { r=" + (this.red * 255) + ", g=" + (this.green * 255) + ", b=" + (this.blue * 255) + " }";
+    }
+
+    public Color clone() {
+        return new Color(this.red, this.green, this.blue, this.alpha);
     }
 
     public static final Color BLACK = new Color(0F,0F,0F);

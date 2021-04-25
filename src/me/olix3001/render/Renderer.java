@@ -58,7 +58,7 @@ public class Renderer {
         Solid hitSolid = hit.getSolid();
         Color hitColor = hit.getSolid().getTextureColor(hitPos);
         float emission = hitSolid.getEmission();
-        float reflectivity = hitSolid.getReflectivity();
+        float reflectivity = hitSolid.getParent().getReflectivity();
         float solidTransparency = hitColor.getAlpha();
 
         // Diffuse shading

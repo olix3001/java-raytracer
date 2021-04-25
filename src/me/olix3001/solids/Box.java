@@ -1,17 +1,31 @@
 package me.olix3001.solids;
 
+import me.olix3001.gui.FloatSpinner;
+import me.olix3001.gui.GuiUtils;
 import me.olix3001.math.Vector3;
 import me.olix3001.pixeldata.Color;
 import me.olix3001.render.Intersection;
 import me.olix3001.render.Ray;
 
-public class Box extends Solid {
-    public Vector3 min, max;
+import javax.swing.*;
+import java.awt.*;
 
-    public Box(Vector3 position, Vector3 scale, Color color, float reflectivity, float emission) {
+public class Box extends Solid {
+    private Vector3 min, max;
+    private float scale;
+
+    public Box(Vector3 position, float scale, Color color, float reflectivity, float emission) {
         super(position, color, reflectivity, emission);
-        this.max = position.add(scale.multiply(0.5F));
-        this.min = position.subtract(scale.multiply(0.5F));
+        setScale(scale);
+        this.scale = scale;
+
+        this.name = "Box";
+    }
+
+    public void setScale(float scale) {
+        Vector3 v = new Vector3(scale, scale, scale);
+        this.max = position.add(v.multiply(0.5F));
+        this.min = position.subtract(v.multiply(0.5F));
     }
 
     @Override
@@ -77,5 +91,62 @@ public class Box extends Solid {
         }
 
         return new Vector3(0, 0, 0);
+    }
+
+    @Override
+    public void propertiesDialog(JFrame frame) {
+        // name
+        frame.add(GuiUtils.createNameEdit(this, frame));
+
+        // position
+        JLabel positionLabel = new JLabel("Position");
+        frame.add(positionLabel);
+
+        JPanel positionPanel = GuiUtils.createVectorEdition(this.position, true);
+        positionPanel.setPreferredSize(new Dimension(frame.getWidth() - 30, 100));
+        frame.add(positionPanel);
+
+        // size
+        FloatSpinner scale = new FloatSpinner(this.scale);
+        scale.addChangeListener((e) -> {
+            this.scale = scale.getFloat();
+            setScale(this.scale);
+        });
+        scale.setPreferredSize(new Dimension(frame.getWidth() - 100, 25));
+        JPanel scalePanel = GuiUtils.createLabelComponentPair("Scale: ", scale);
+        frame.add(scalePanel);
+
+        // reflectivity
+        FloatSpinner reflectivity = new FloatSpinner(this.reflectivity);
+        reflectivity.addChangeListener((e) -> {
+            float v = reflectivity.getFloat();
+            if (0 <= v && v <= 1f) {
+                this.reflectivity = v;
+            } else {
+                this.reflectivity = 0f;
+                reflectivity.setValue(this.reflectivity);
+            }
+        });
+        reflectivity.setPreferredSize(new Dimension(frame.getWidth() - 100, 25));
+        JPanel reflectivityPanel = GuiUtils.createLabelComponentPair("reflectivity: ", reflectivity);
+        frame.add(reflectivityPanel);
+
+        // emission
+        FloatSpinner emission = new FloatSpinner(this.emission);
+        emission.addChangeListener((e) -> {
+            float v = emission.getFloat();
+            if (0 <= v && v <= 1f) {
+                this.emission = v;
+            } else {
+                this.emission = 0f;
+                emission.setValue(this.emission);
+            }
+        });
+        emission.setPreferredSize(new Dimension(frame.getWidth() - 100, 25));
+        JPanel emissionPanel = GuiUtils.createLabelComponentPair("emission: ", emission);
+        frame.add(emissionPanel);
+
+        // color
+        frame.add(GuiUtils.createColorPicker("Color: ", this.color));
     }
 }

@@ -1,6 +1,13 @@
 package me.olix3001.math;
 
-public class Vector3 {
+import me.olix3001.gui.ColorChooserButton;
+
+import java.awt.*;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Vector3 implements Serializable {
     private float x, y, z;
 
     public Vector3(float x, float y, float z) {

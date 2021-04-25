@@ -1,5 +1,6 @@
 package me.olix3001.gui;
 
+import me.olix3001.math.Vector2;
 import me.olix3001.math.Vector3;
 import me.olix3001.render.Camera;
 import me.olix3001.render.Renderer;
@@ -33,6 +34,8 @@ public class Viewport extends JPanel {
     private boolean autoResolution = false;
     private boolean captureMovement;
     private int prevX, prevY;
+    private Viewport viewport;
+    private PropertiesDialog propertiesDialog;
 
     private RenderRunnable beforeRender = null;
     private RenderRunnable afterRender = null;
@@ -41,6 +44,7 @@ public class Viewport extends JPanel {
         setFocusable(true);
 
         scene = new Scene();
+        propertiesDialog = PropertiesDialog.get();
 
         camera = scene.getCamera();
         cameraPosition = camera.getPosition();
@@ -137,9 +141,18 @@ public class Viewport extends JPanel {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    return;
+                }
                 captureMovement = !captureMovement;
                 prevX = e.getXOnScreen();
                 prevY = e.getYOnScreen();
+            }
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (SwingUtilities.isRightMouseButton(e)) {
+                    new OptionsPopup(new Vector2(e.getX(), e.getY()), viewport);
+                }
             }
         });
 
@@ -147,6 +160,7 @@ public class Viewport extends JPanel {
         this.frame = container;
         this.resolution = resolution;
         this.deltaTime = 1;
+        this.viewport = this;
     }
 
     public void MainLoop() {

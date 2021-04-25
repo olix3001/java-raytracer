@@ -29,7 +29,7 @@ public class Main {
 
         viewport.getScene().addSolid(new Sphere(new Vector3(-.75f, 0, 0), .5f, Color.RED, .3f, 0f));
         viewport.getScene().addSolid(new Sphere(new Vector3(.75f, 0, 0), .5f, Color.GREEN, .3f, 0f));
-        viewport.getScene().addSolid(new Box(new Vector3(0, .75f, .5f), new Vector3(.5f, .5f, .5f), Color.BLUE, .3f, 0f));
+        viewport.getScene().addSolid(new Box(new Vector3(0, .75f, .5f), .5f, Color.BLUE, .3f, 0f));
 
         viewport.getScene().addSolid(new CheckerboardPlane(-2f, 0f, 0f));
         //viewport.getScene().addSolid(new TexturedPlane(-2f, "planks.jpg",15f, 0f, 0f));

@@ -26,4 +26,9 @@ public class Plane extends Solid {
     public Vector3 getNormalAt(Vector3 point) {
         return new Vector3(0, 1, 0);
     }
+
+    @Override
+    public boolean canDelete() {
+        return false;
+    }
 }

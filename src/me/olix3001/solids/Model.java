@@ -1,5 +1,8 @@
 package me.olix3001.solids;
 
+import me.olix3001.gui.FloatSpinner;
+import me.olix3001.gui.GuiUtils;
+import me.olix3001.gui.Viewport;
 import me.olix3001.math.Triangulation;
 import me.olix3001.math.Vector3;
 import me.olix3001.other.Obj;
@@ -10,6 +13,10 @@ import me.olix3001.utils.Face;
 import me.olix3001.utils.MtlLoader;
 import me.olix3001.utils.ObjLoader;
 
+import javax.swing.*;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import java.awt.*;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +37,7 @@ public class Model extends Solid {
     }
 
     private void load() {
-        this.triangles = new ArrayList<>();
+        List<Triangle> temp = new ArrayList<>();
         ObjLoader loader = null;
         if (obj.hasMtl()) {
             loader = new ObjLoader(obj.getObjPath(), new MtlLoader(obj.getMtlPath(), textureTransparency));
@@ -48,7 +55,7 @@ public class Model extends Solid {
             for (Face f : loader.getFaces()) {
                 for (Triangulation.Triangle t : Triangulation.triangulateFace(f)) {
                     if (f.getMaterial().hasTexture()) {
-                        triangles.add(new TexturedTriangle(
+                        Triangle triangle = new TexturedTriangle(
                                 position.add(t.a.multiply(size)),
                                 position.add(t.b.multiply(size)),
                                 position.add(t.c.multiply(size)),
@@ -59,20 +66,23 @@ public class Model extends Solid {
                                 this.reflectivity,
                                 f.getEmission(),
                                 f.getMaterial(),
-                                textureTransparency)
-                        );
+                                textureTransparency);
+                        triangle.setParent(this);
+                        temp.add(triangle);
                     } else {
-                        triangles.add(new Triangle(
+                        Triangle triangle = new Triangle(
                                 position.add(t.a.multiply(size)),
                                 position.add(t.b.multiply(size)),
                                 position.add(t.c.multiply(size)),
                                 f.getColor(), this.reflectivity,
-                                f.getEmission())
-                        );
+                                f.getEmission());
+                        triangle.setParent(this);
+                        temp.add(triangle);
                     }
                     i++;
                 }
             }
+            this.triangles = temp;
         } else {
             throw new RuntimeException("Cannot load object");
         }
@@ -96,6 +106,17 @@ public class Model extends Solid {
 
     public void reload() {
         load();
+    }
+
+    public void askForMaterial() {
+        JFileChooser fileChooser = new JFileChooser();
+        fileChooser.setFileFilter(new FileNameExtensionFilter("MATERIAL FILE", "mtl"));
+        fileChooser.setSelectedFile(new File("model.mtl"));
+        int result = fileChooser.showOpenDialog(null);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            this.obj.setMtlPath(file.getAbsolutePath());
+        }
     }
 
     @Override
@@ -127,5 +148,58 @@ public class Model extends Solid {
         for (Triangle t : triangles) {
             t.setPosition(position.add(offset));
         }
+    }
+
+    @Override
+    public void propertiesDialog(JFrame frame) {
+        // name
+        frame.add(GuiUtils.createNameEdit(this, frame));
+
+        // position
+        JLabel positionLabel = new JLabel("Position");
+        frame.add(positionLabel);
+
+        JPanel positionPanel = GuiUtils.createVectorEdition(this.position, true);
+        positionPanel.setPreferredSize(new Dimension(frame.getWidth() - 30, 100));
+        frame.add(positionPanel);
+
+        // size
+        FloatSpinner size = new FloatSpinner(this.size);
+        size.addChangeListener((e) -> {
+            this.size = size.getFloat();
+        });
+        size.setPreferredSize(new Dimension(frame.getWidth() - 100, 25));
+        JPanel scalePanel = GuiUtils.createLabelComponentPair("Scale: ", size);
+        frame.add(scalePanel);
+
+        // reflectivity
+        FloatSpinner reflectivity = new FloatSpinner(this.reflectivity);
+        reflectivity.addChangeListener((e) -> {
+            float v = reflectivity.getFloat();
+            if (0 <= v && v <= 1f) {
+                this.reflectivity = v;
+            } else {
+                this.reflectivity = 0f;
+                reflectivity.setValue(this.reflectivity);
+            }
+        });
+        reflectivity.setPreferredSize(new Dimension(frame.getWidth() - 100, 25));
+        JPanel reflectivityPanel = GuiUtils.createLabelComponentPair("reflectivity: ", reflectivity);
+        frame.add(reflectivityPanel);
+
+        // material
+        JButton material = new JButton(this.obj.hasMtl() ? new File(this.obj.getMtlPath()).getName() : "Select material");
+        material.addActionListener((e) -> {
+            askForMaterial();
+            material.setText(this.obj.hasMtl() ? new File(this.obj.getMtlPath()).getName() : "Select material");
+        });
+        frame.add(material);
+
+        // reload
+        JButton reload = new JButton("Reload object");
+        reload.addActionListener((e) -> {
+            reload();
+        });
+        frame.add(reload);
     }
 }

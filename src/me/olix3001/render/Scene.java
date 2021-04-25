@@ -22,6 +22,18 @@ public class Scene {
         this.solids.add(solid);
     }
 
+    public List<Solid> getSolids() {
+        return solids;
+    }
+
+    public void setSolids(List<Solid> solids) {
+        this.solids = solids;
+    }
+
+    public void removeSolid(Solid s) {
+        solids.remove(s);
+    }
+
     public void clearSolids() {
         this.solids.clear();
     }
