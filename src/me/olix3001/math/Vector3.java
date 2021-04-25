@@ -19,7 +19,7 @@ public class Vector3 implements Serializable {
         this.z = z;
     }
 
-    public static interface VectorChangedListener {
+    public static interface VectorChangedListener extends Serializable {
         public void vectorChanged(Vector3 v);
     }
 
