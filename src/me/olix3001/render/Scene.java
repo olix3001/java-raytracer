@@ -30,6 +30,10 @@ public class Scene {
         this.solids = solids;
     }
 
+    public void setLight(Light light) {
+        this.light = light;
+    }
+
     public void removeSolid(Solid s) {
         solids.remove(s);
     }

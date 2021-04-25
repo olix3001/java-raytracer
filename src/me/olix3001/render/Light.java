@@ -2,7 +2,9 @@ package me.olix3001.render;
 
 import me.olix3001.math.Vector3;
 
-public class Light {
+import java.io.Serializable;
+
+public class Light implements Serializable {
     private Vector3 position;
 
     public Light(Vector3 position) {

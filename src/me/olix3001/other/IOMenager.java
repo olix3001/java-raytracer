@@ -1,6 +1,7 @@
 package me.olix3001.other;
 
 import me.olix3001.gui.Viewport;
+import me.olix3001.render.Light;
 import me.olix3001.render.Scene;
 import me.olix3001.solids.Solid;
 
@@ -16,6 +17,7 @@ public class IOMenager {
             FileOutputStream outputStream = new FileOutputStream(file);
             ObjectOutputStream out = new ObjectOutputStream(outputStream);
             out.writeObject(scene.getSolids());
+            out.writeObject(scene.getLight());
             out.close();
             outputStream.close();
         } catch (IOException e) {
@@ -29,6 +31,7 @@ public class IOMenager {
             FileInputStream inputStream = new FileInputStream(file);
             ObjectInputStream in = new ObjectInputStream(inputStream);
             scene.setSolids((List<Solid>) in.readObject());
+            scene.setLight((Light) in.readObject());
             in.close();
             inputStream.close();
         } catch (IOException | ClassNotFoundException e) {
